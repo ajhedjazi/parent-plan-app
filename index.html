@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shared Family Calendar Prototype</title>
+    <meta
+      name="description"
+      content="A calm shared calendar prototype for separated parents to coordinate child-related dates and simple requests."
+    >
+    <link rel="stylesheet" href="css/tokens.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container site-header-inner">
+        <div>
+          <p class="eyebrow">Shared family calendar</p>
+          <h1>Know what is coming up, without another long conversation.</h1>
+          <p class="site-intro">
+            A simple place for dates, practical notes, and requests that need a clear yes or no.
+          </p>
+        </div>
+        <div class="header-actions" aria-label="Primary actions">
+          <button class="button button-primary" type="button" data-open-panel="event-panel">Add Event</button>
+          <button class="button button-secondary" type="button" data-open-panel="request-panel">New Request</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <div class="container app-grid">
+        <section class="calendar-section" aria-labelledby="calendar-title">
+          <div class="section-header calendar-heading">
+            <div>
+              <p class="section-kicker">Calendar</p>
+              <h2 id="calendar-title">This month</h2>
+            </div>
+            <div class="month-controls" aria-label="Calendar month controls">
+              <button class="icon-button" type="button" id="prev-month" aria-label="Previous month">
+                <span aria-hidden="true">&lsaquo;</span>
+              </button>
+              <p class="month-label" id="month-label" aria-live="polite"></p>
+              <button class="icon-button" type="button" id="next-month" aria-label="Next month">
+                <span aria-hidden="true">&rsaquo;</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="calendar-card">
+            <div class="calendar-weekdays" aria-hidden="true">
+              <span>Mon</span>
+              <span>Tue</span>
+              <span>Wed</span>
+              <span>Thu</span>
+              <span>Fri</span>
+              <span>Sat</span>
+              <span>Sun</span>
+            </div>
+            <div class="calendar-grid" id="calendar-grid" aria-label="Monthly calendar"></div>
+          </div>
+        </section>
+
+        <aside class="summary-column" aria-label="Calendar summary">
+          <section class="panel" aria-labelledby="upcoming-title">
+            <div class="section-header compact">
+              <div>
+                <p class="section-kicker">Next dates</p>
+                <h2 id="upcoming-title">Upcoming this month</h2>
+              </div>
+            </div>
+            <div class="stack" id="upcoming-list"></div>
+          </section>
+
+          <section class="panel" aria-labelledby="pending-title">
+            <div class="section-header compact">
+              <div>
+                <p class="section-kicker">Needs agreement</p>
+                <h2 id="pending-title">Pending requests</h2>
+              </div>
+            </div>
+            <div class="stack" id="pending-requests"></div>
+          </section>
+        </aside>
+      </div>
+
+      <section class="container full-width-section" aria-labelledby="requests-title">
+        <div class="section-header">
+          <div>
+            <p class="section-kicker">Requests</p>
+            <h2 id="requests-title">Simple decisions</h2>
+          </div>
+          <button class="button button-secondary" type="button" data-open-panel="request-panel">New Request</button>
+        </div>
+        <div class="request-list" id="request-list"></div>
+      </section>
+    </main>
+
+    <dialog class="form-panel" id="event-panel" aria-labelledby="event-form-title">
+      <form method="dialog" class="panel-form" id="event-form">
+        <div class="form-header">
+          <div>
+            <p class="section-kicker">New date</p>
+            <h2 id="event-form-title">Add event</h2>
+          </div>
+          <button class="icon-button" type="button" data-close-panel aria-label="Close add event form">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <label>
+          <span>Title</span>
+          <input type="text" name="title" placeholder="School trip payment due" required>
+        </label>
+
+        <label>
+          <span>Child</span>
+          <select name="child" required>
+            <option value="Maya">Maya</option>
+            <option value="Leo">Leo</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Date</span>
+          <input type="date" name="date" required>
+        </label>
+
+        <label>
+          <span>Time <small>optional</small></span>
+          <input type="time" name="time">
+        </label>
+
+        <label>
+          <span>Location <small>optional</small></span>
+          <input type="text" name="location" placeholder="School hall">
+        </label>
+
+        <label>
+          <span>Event notes <small>optional</small></span>
+          <textarea name="notes" rows="3" placeholder="Bring PE kit and signed form."></textarea>
+        </label>
+
+        <div class="form-actions">
+          <button class="button button-secondary" type="button" data-close-panel>Cancel</button>
+          <button class="button button-primary" type="submit">Save event</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="form-panel" id="request-panel" aria-labelledby="request-form-title">
+      <form method="dialog" class="panel-form" id="request-form">
+        <div class="form-header">
+          <div>
+            <p class="section-kicker">Needs agreement</p>
+            <h2 id="request-form-title">New request</h2>
+          </div>
+          <button class="icon-button" type="button" data-close-panel aria-label="Close new request form">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <label>
+          <span>Request title</span>
+          <input type="text" name="title" placeholder="Move dentist appointment" required>
+        </label>
+
+        <label>
+          <span>Request details</span>
+          <textarea
+            name="details"
+            rows="4"
+            placeholder="The clinic only has a later appointment available that week."
+            required
+          ></textarea>
+        </label>
+
+        <label>
+          <span>Related date <small>optional</small></span>
+          <input type="date" name="date">
+        </label>
+
+        <div class="form-actions">
+          <button class="button button-secondary" type="button" data-close-panel>Cancel</button>
+          <button class="button button-primary" type="submit">Create request</button>
+        </div>
+      </form>
+    </dialog>
+
+    <template id="empty-state-template">
+      <article class="empty-state">
+        <p></p>
+      </article>
+    </template>
+
+    <script src="js/main.js" defer></script>
+  </body>
+</html>
