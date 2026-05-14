@@ -24,6 +24,7 @@ const seedData = {
       time: "09:00",
       notes: "Return the signed form and payment slip.",
       createdBy: "Alex",
+      status: "active",
     },
     {
       id: "event-2",
@@ -33,6 +34,7 @@ const seedData = {
       time: "16:30",
       notes: "Bring the blue folder from the kitchen drawer.",
       createdBy: "Sam",
+      status: "active",
     },
     {
       id: "event-3",
@@ -42,6 +44,7 @@ const seedData = {
       time: "14:00",
       notes: "Present already bought. Card still needed.",
       createdBy: "Alex",
+      status: "active",
     },
   ],
 };
@@ -52,6 +55,11 @@ const calendarGrid = document.querySelector("#calendar-grid");
 const monthLabel = document.querySelector("#month-label");
 const upcomingList = document.querySelector("#upcoming-list");
 const eventForm = document.querySelector("#event-form");
+const eventDetailPanel = document.querySelector("#event-detail-panel");
+const eventDetailTitle = document.querySelector("#event-detail-title");
+const eventDetailView = document.querySelector("#event-detail-view");
+const eventEditForm = document.querySelector("#event-edit-form");
+const cancelEditEventButton = document.querySelector("#cancel-edit-event");
 
 document.querySelector("#prev-month").addEventListener("click", () => {
   visibleMonth = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() - 1, 1);
@@ -90,11 +98,43 @@ eventForm.addEventListener("submit", (event) => {
     time: data.get("time"),
     notes: data.get("notes").trim(),
     createdBy: "Alex",
+    status: "active",
   });
   saveState();
   eventForm.reset();
   eventForm.closest("dialog").close();
   render();
+});
+
+eventEditForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const eventId = eventDetailPanel.dataset.eventId;
+  const eventIndex = state.events.findIndex((item) => item.id === eventId);
+
+  if (eventIndex === -1) {
+    eventDetailPanel.close();
+    return;
+  }
+
+  const data = new FormData(eventEditForm);
+  state.events[eventIndex] = {
+    ...state.events[eventIndex],
+    title: data.get("title").trim(),
+    child: data.get("child"),
+    date: data.get("date"),
+    time: data.get("time"),
+    notes: data.get("notes").trim(),
+    updatedAt: new Date().toISOString(),
+    updatedBy: "Alex",
+  };
+
+  saveState();
+  render();
+  showEventDetails(eventId);
+});
+
+cancelEditEventButton.addEventListener("click", () => {
+  showEventDetails(eventDetailPanel.dataset.eventId);
 });
 
 function loadState() {
@@ -126,6 +166,7 @@ function normalizeState(nextState) {
       ...eventWithoutLocation,
       child,
       time: event.time || "09:00",
+      status: event.status || "active",
     };
   });
 
@@ -187,9 +228,12 @@ function renderCalendar() {
 
     const markers = document.createElement("span");
     markers.className = "day-markers";
-    dayEvents.slice(0, 3).forEach(() => {
+    dayEvents.slice(0, 3).forEach((dayEvent) => {
       const dot = document.createElement("span");
       dot.className = "day-dot";
+      if (dayEvent.status === "cancelled") {
+        dot.classList.add("is-cancelled");
+      }
       markers.append(dot);
     });
 
@@ -228,10 +272,20 @@ function getEventsForVisibleMonth() {
 function createEventCard(event) {
   const card = document.createElement("article");
   card.className = "event-card";
+  if (event.status === "cancelled") {
+    card.classList.add("is-cancelled");
+  }
 
   const date = document.createElement("p");
   date.className = "date-pill";
   date.textContent = formatEventDate(event);
+  if (event.status === "cancelled") {
+    date.classList.add("is-cancelled");
+  }
+
+  const status = document.createElement("span");
+  status.className = `status-badge status-${event.status}`;
+  status.textContent = getStatusLabel(event.status);
 
   const title = document.createElement("h3");
   title.textContent = event.title;
@@ -244,25 +298,19 @@ function createEventCard(event) {
   createdBy.className = "created-by";
   createdBy.textContent = `Created by ${event.createdBy}`;
 
-  const detail = document.createElement("div");
-  detail.className = "event-detail";
-
-  if (event.notes) {
-    const notes = document.createElement("p");
-    notes.innerHTML = `<strong>Event notes:</strong> ${escapeHtml(event.notes)}`;
-    detail.append(notes);
-  }
-
   const detailButton = document.createElement("button");
   detailButton.className = "button button-secondary";
   detailButton.type = "button";
-  detailButton.textContent = "View details";
+  detailButton.textContent = "View / edit";
   detailButton.addEventListener("click", () => {
-    card.classList.toggle("is-open");
-    detailButton.textContent = card.classList.contains("is-open") ? "Hide details" : "View details";
+    openEventDetails(event.id);
   });
 
-  card.append(date, title, meta, createdBy, detailButton, detail);
+  card.append(date);
+  if (event.status === "cancelled") {
+    card.append(status);
+  }
+  card.append(title, meta, createdBy, detailButton);
   return card;
 }
 
@@ -275,12 +323,142 @@ function openDayEvents(isoDate) {
     return;
   }
 
-  const card = [...document.querySelectorAll(".event-card")].find((item) =>
-    item.querySelector("h3")?.textContent === event.title
+  openEventDetails(event.id);
+}
+
+function openEventDetails(eventId) {
+  if (!getEventById(eventId)) {
+    return;
+  }
+
+  showEventDetails(eventId);
+  eventDetailPanel.showModal();
+}
+
+function showEventDetails(eventId) {
+  const event = getEventById(eventId);
+  if (!event) {
+    eventDetailPanel.close();
+    return;
+  }
+
+  eventDetailPanel.dataset.eventId = event.id;
+  eventDetailTitle.textContent = event.title;
+  eventDetailView.classList.remove("is-hidden");
+  eventEditForm.classList.add("is-hidden");
+  renderEventDetailView(event);
+}
+
+function renderEventDetailView(event) {
+  eventDetailView.innerHTML = "";
+
+  const status = document.createElement("span");
+  status.className = `status-badge status-${event.status}`;
+  status.textContent = getStatusLabel(event.status);
+
+  const details = document.createElement("dl");
+  details.className = "detail-list";
+  details.append(
+    createDetailRow("Title", event.title),
+    createDetailRow("Date", formatDate.format(new Date(`${event.date}T00:00:00`))),
+    createDetailRow("Time", event.time),
+    createDetailRow("Child/person", event.child),
+    createDetailRow("Notes/details", event.notes || "No notes added"),
+    createDetailRow("Created by", event.createdBy),
+    createDetailRow("Status", getStatusLabel(event.status)),
   );
 
-  card?.scrollIntoView({ behavior: "smooth", block: "center" });
-  card?.classList.add("is-open");
+  const actions = document.createElement("div");
+  actions.className = "event-detail-actions";
+
+  const editButton = document.createElement("button");
+  editButton.className = "button button-primary";
+  editButton.type = "button";
+  editButton.textContent = "Edit event";
+  editButton.addEventListener("click", () => showEditEventForm(event.id));
+
+  const cancelButton = document.createElement("button");
+  cancelButton.className = "button button-secondary";
+  cancelButton.type = "button";
+  cancelButton.textContent = "Cancel event";
+  cancelButton.disabled = event.status === "cancelled";
+  cancelButton.addEventListener("click", () => cancelEvent(event.id));
+
+  const deleteButton = document.createElement("button");
+  deleteButton.className = "button button-secondary button-danger";
+  deleteButton.type = "button";
+  deleteButton.textContent = "Delete event";
+  deleteButton.addEventListener("click", () => deleteEvent(event.id));
+
+  actions.append(editButton, cancelButton, deleteButton);
+  eventDetailView.append(status, details, actions);
+}
+
+function showEditEventForm(eventId) {
+  const event = getEventById(eventId);
+  if (!event) {
+    eventDetailPanel.close();
+    return;
+  }
+
+  eventDetailView.classList.add("is-hidden");
+  eventEditForm.classList.remove("is-hidden");
+  eventEditForm.elements.title.value = event.title;
+  eventEditForm.elements.child.value = event.child;
+  eventEditForm.elements.date.value = event.date;
+  eventEditForm.elements.time.value = event.time;
+  eventEditForm.elements.notes.value = event.notes || "";
+}
+
+function cancelEvent(eventId) {
+  const event = getEventById(eventId);
+  if (!event) {
+    eventDetailPanel.close();
+    return;
+  }
+
+  event.status = "cancelled";
+  event.updatedAt = new Date().toISOString();
+  event.updatedBy = "Alex";
+  saveState();
+  render();
+  showEventDetails(eventId);
+}
+
+function deleteEvent(eventId) {
+  const event = getEventById(eventId);
+  if (!event) {
+    eventDetailPanel.close();
+    return;
+  }
+
+  const confirmed = window.confirm(`Delete "${event.title}"? This removes it from the calendar.`);
+  if (!confirmed) {
+    return;
+  }
+
+  state.events = state.events.filter((item) => item.id !== eventId);
+  saveState();
+  render();
+  eventDetailPanel.close();
+}
+
+function getEventById(eventId) {
+  return state.events.find((event) => event.id === eventId);
+}
+
+function createDetailRow(label, value) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "detail-row";
+
+  const term = document.createElement("dt");
+  term.textContent = label;
+
+  const description = document.createElement("dd");
+  description.textContent = value;
+
+  wrapper.append(term, description);
+  return wrapper;
 }
 
 function setDefaultFormDate(panel) {
@@ -306,6 +484,10 @@ function createTextNode(text) {
 function formatEventDate(event) {
   const dateText = formatDate.format(new Date(`${event.date}T00:00:00`));
   return event.time ? `${dateText}, ${event.time}` : dateText;
+}
+
+function getStatusLabel(status) {
+  return status === "cancelled" ? "Cancelled" : "Active";
 }
 
 function getCalendarLabel(date, events) {

@@ -80,6 +80,10 @@
   background: var(--color-accent);
 }
 
+.day-dot.is-cancelled {
+  background: var(--color-muted);
+}
+
 .calendar-day.is-muted .day-dot {
   background: #a9b2a6;
 }
@@ -92,6 +96,12 @@
   padding: 4px 9px;
   font-size: 0.78rem;
   font-weight: 760;
+}
+
+.date-pill.is-cancelled {
+  background: var(--color-surface-soft);
+  color: var(--color-muted);
+  text-decoration: line-through;
 }
 
 .created-by {

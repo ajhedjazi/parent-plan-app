@@ -126,6 +126,58 @@
       </form>
     </dialog>
 
+    <dialog class="form-panel" id="event-detail-panel" aria-labelledby="event-detail-title">
+      <div class="panel-form">
+        <div class="form-header">
+          <div>
+            <p class="section-kicker">Event details</p>
+            <h2 id="event-detail-title">Event details</h2>
+          </div>
+          <button class="icon-button" type="button" data-close-panel aria-label="Close event details">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="event-detail-view" id="event-detail-view"></div>
+
+        <form class="event-edit-form is-hidden" id="event-edit-form">
+          <label>
+            <span>Title</span>
+            <input type="text" name="title" required>
+          </label>
+
+          <label>
+            <span>Child</span>
+            <select name="child" required>
+              <option value="Ted">Ted</option>
+              <option value="Gus">Gus</option>
+              <option value="Both">Both</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Date</span>
+            <input type="date" name="date" required>
+          </label>
+
+          <label>
+            <span>Time</span>
+            <input type="time" name="time" required>
+          </label>
+
+          <label>
+            <span>Event notes <small>optional</small></span>
+            <textarea name="notes" rows="3"></textarea>
+          </label>
+
+          <div class="form-actions">
+            <button class="button button-secondary" type="button" id="cancel-edit-event">Cancel edit</button>
+            <button class="button button-primary" type="submit">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
     <template id="empty-state-template">
       <article class="empty-state">
         <p></p>
