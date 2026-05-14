@@ -73,98 +73,14 @@
   background: linear-gradient(90deg, #6f5cff 0%, rgba(111, 92, 255, 0.1) 100%);
 }
 
-.hero-visual-glow {
-  position: absolute;
-  inset: 34px 0 12px;
+.hero-artwork {
+  display: block;
+  width: 100%;
+  max-width: 680px;
+  height: auto;
+  object-fit: contain;
   border-radius: var(--radius-card);
-  background: linear-gradient(135deg, rgba(255, 221, 173, 0.54) 0%, rgba(255, 198, 221, 0.54) 48%, rgba(225, 211, 255, 0.7) 100%);
-  box-shadow: 0 30px 70px rgba(138, 63, 252, 0.12);
-  transform: skewY(-4deg);
-}
-
-.hero-calendar-illustration {
-  width: min(46%, 190px);
-  min-width: 138px;
-  position: absolute;
-  top: 18px;
-  left: 8%;
-  border: 1px solid rgba(138, 63, 252, 0.18);
-  border-radius: var(--radius-card);
-  background: linear-gradient(160deg, #ffffff 0%, #f5edff 100%);
-  padding: var(--space-3);
-  box-shadow: 0 22px 42px rgba(93, 39, 180, 0.18);
-  transform: rotate(-7deg);
-}
-
-.hero-calendar-top {
-  height: 28px;
-  margin: calc(var(--space-3) * -1) calc(var(--space-3) * -1) var(--space-3);
-  border-radius: var(--radius-card) var(--radius-card) 0 0;
-  background: linear-gradient(90deg, #8a3ffc 0%, #c153dc 100%);
-}
-
-.hero-calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-2);
-}
-
-.hero-calendar-grid span {
-  aspect-ratio: 1;
-  border-radius: 6px;
-  background: rgba(138, 63, 252, 0.13);
-}
-
-.hero-calendar-grid span:nth-child(5),
-.hero-calendar-grid span:nth-child(9) {
-  background: rgba(244, 119, 63, 0.24);
-}
-
-.hero-family-illustration {
-  position: absolute;
-  right: 9%;
-  bottom: 30px;
-  display: flex;
-  align-items: end;
-  gap: var(--space-3);
-}
-
-.family-avatar {
-  position: relative;
-  width: 86px;
-  height: 112px;
-  border-radius: 44px 44px 28px 28px;
-  background: linear-gradient(180deg, #ffd3b8 0 34%, #34b7a8 34% 100%);
-  box-shadow: 0 20px 34px rgba(42, 30, 54, 0.16);
-}
-
-.family-avatar::before {
-  content: "";
-  position: absolute;
-  top: 14px;
-  left: 18px;
-  width: 50px;
-  height: 34px;
-  border-radius: 999px 999px 18px 18px;
-  background: #8d4f35;
-}
-
-.family-avatar::after {
-  content: "";
-  position: absolute;
-  top: 48px;
-  left: 27px;
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: #332238;
-  box-shadow: 24px 0 0 #332238;
-}
-
-.avatar-two {
-  width: 80px;
-  height: 106px;
-  background: linear-gradient(180deg, #ffd8bd 0 35%, #ffbc45 35% 100%);
+  filter: drop-shadow(0 28px 48px rgba(95, 56, 120, 0.12));
 }
 
 .button {
@@ -602,43 +518,5 @@
     grid-column: auto;
     display: grid;
     justify-items: end;
-  }
-}
-
-@media (max-width: 559px) {
-  .hero-calendar-illustration {
-    min-width: 126px;
-    left: 5%;
-  }
-
-  .hero-family-illustration {
-    right: 4%;
-    gap: var(--space-2);
-  }
-
-  .family-avatar {
-    width: 68px;
-    height: 90px;
-    border-radius: 34px 34px 22px 22px;
-  }
-
-  .family-avatar::before {
-    top: 12px;
-    left: 15px;
-    width: 38px;
-    height: 26px;
-  }
-
-  .family-avatar::after {
-    top: 40px;
-    left: 22px;
-    width: 7px;
-    height: 7px;
-    box-shadow: 19px 0 0 #332238;
-  }
-
-  .avatar-two {
-    width: 64px;
-    height: 86px;
   }
 }

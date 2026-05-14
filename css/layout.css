@@ -47,11 +47,12 @@
 
 .hero-visual {
   min-width: 0;
-  min-height: 240px;
+  min-height: 220px;
   position: relative;
   display: grid;
-  place-items: center;
-  overflow: hidden;
+  justify-items: center;
+  align-items: center;
+  overflow: visible;
 }
 
 .page-shell {
@@ -128,6 +129,15 @@
   .hero-shell {
     grid-template-columns: minmax(0, 1.06fr) minmax(320px, 0.74fr);
     gap: var(--space-7);
+  }
+
+  .hero-visual {
+    justify-items: end;
+  }
+
+  .hero-artwork {
+    width: min(48vw, 680px);
+    max-width: none;
   }
 
   .app-grid {
