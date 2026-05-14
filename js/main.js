@@ -331,7 +331,9 @@ function renderCalendar() {
     dayEvents.slice(0, 3).forEach((dayEvent) => {
       const dot = document.createElement("span");
       dot.className = "day-dot";
-      dot.classList.add(`tone-${getEventTone(dayEvent)}`);
+      if (isSpecialOccasion(dayEvent)) {
+        dot.classList.add("tone-gift");
+      }
       if (dayEvent.status === "cancelled") {
         dot.classList.add("is-cancelled");
       }
@@ -381,8 +383,10 @@ function getEventsForVisibleMonth() {
 
 function createEventCard(event) {
   const card = document.createElement("article");
-  const tone = getEventTone(event);
-  card.className = `event-card tone-${tone}`;
+  card.className = "event-card";
+  if (isSpecialOccasion(event)) {
+    card.classList.add("tone-gift");
+  }
   if (event.status === "cancelled") {
     card.classList.add("is-cancelled");
   }
@@ -437,11 +441,11 @@ function createEventCard(event) {
     openEventDetails(event.id);
   });
 
-  const icon = document.createElement("span");
-  icon.className = `event-card-icon event-icon-${getEventIcon(event)}`;
-  icon.setAttribute("aria-hidden", "true");
+  if (isSpecialOccasion(event)) {
+    actionWrap.append(createGiftIcon());
+  }
 
-  actionWrap.append(icon, detailButton);
+  actionWrap.append(detailButton);
   card.append(date, body, actionWrap);
   return card;
 }
@@ -1238,56 +1242,37 @@ function createBadge(text, className) {
   return badge;
 }
 
-function getEventTone(event) {
-  const title = event.title.toLowerCase();
+function createGiftIcon() {
+  const wrapper = document.createElement("span");
+  wrapper.className = "event-card-icon event-icon-gift";
+  wrapper.setAttribute("aria-hidden", "true");
 
-  if (event.source === "ai_import") {
-    return "magic";
-  }
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("focusable", "false");
 
-  if (/\b(dentist|doctor|appointment|health)\b/.test(title)) {
-    return "teal";
-  }
+  const paths = [
+    "M4 11h16",
+    "M12 7v14",
+    "M5 11v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8",
+    "M4 7h16v4H4z",
+    "M12 7H8.5A2.5 2.5 0 1 1 12 4.5z",
+    "M12 7h3.5A2.5 2.5 0 1 0 12 4.5z",
+  ];
 
-  if (/\b(birthday|party|gift)\b/.test(title)) {
-    return "purple";
-  }
+  paths.forEach((pathData) => {
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", pathData);
+    svg.append(path);
+  });
 
-  if (/\b(school|form|trip|club|lesson)\b/.test(title)) {
-    return "orange";
-  }
-
-  if (event.child === "Gus") {
-    return "teal";
-  }
-
-  if (event.child === "Both") {
-    return "purple";
-  }
-
-  return "orange";
+  wrapper.append(svg);
+  return wrapper;
 }
 
-function getEventIcon(event) {
+function isSpecialOccasion(event) {
   const title = event.title.toLowerCase();
-
-  if (event.source === "ai_import") {
-    return "magic";
-  }
-
-  if (/\b(dentist|doctor|appointment|health)\b/.test(title)) {
-    return "health";
-  }
-
-  if (/\b(birthday|party|gift)\b/.test(title)) {
-    return "gift";
-  }
-
-  if (/\b(school|form|trip|club|lesson)\b/.test(title)) {
-    return "note";
-  }
-
-  return "calendar";
+  return /\b(birthday|party|gift)\b/.test(title);
 }
 
 function formatEventDate(event) {

@@ -233,30 +233,27 @@
   display: grid;
   align-content: center;
   gap: 2px;
-  border: 1px solid rgba(244, 119, 63, 0.16);
+  border: 1px solid rgba(234, 223, 238, 0.9);
   border-radius: var(--radius-card);
-  background: #fff0e7;
-  color: #c64a1d;
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--color-muted);
   padding: var(--space-3);
   font-size: 0.8rem;
   font-weight: 760;
 }
 
 .event-date-badge strong {
-  color: inherit;
+  color: var(--color-text);
   font-size: 1.05rem;
 }
 
-.event-card.tone-teal .event-date-badge {
-  border-color: rgba(12, 159, 150, 0.18);
-  background: #e8fbf8;
-  color: #07847b;
-}
-
-.event-card.tone-purple .event-date-badge,
-.event-card.tone-magic .event-date-badge {
+.event-card.tone-gift .event-date-badge {
   border-color: rgba(138, 63, 252, 0.16);
   background: #f4edff;
+  color: var(--color-accent-strong);
+}
+
+.event-card.tone-gift .event-date-badge strong {
   color: var(--color-accent-strong);
 }
 
@@ -306,7 +303,7 @@
   grid-column: 1 / -1;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: var(--space-3);
 }
 
@@ -318,47 +315,32 @@
 .event-card-icon {
   width: 40px;
   height: 40px;
+  position: relative;
   display: inline-grid;
   place-items: center;
   border-radius: 999px;
   background: rgba(138, 63, 252, 0.1);
   color: var(--color-accent);
+  margin-right: auto;
 }
 
 .event-card-icon::before {
-  content: "";
-  width: 14px;
-  height: 14px;
-  border: 2px solid currentColor;
-  border-radius: 4px;
-  box-shadow: 5px 5px 0 -2px currentColor;
+  content: none;
 }
 
-.event-icon-health {
-  background: rgba(12, 159, 150, 0.12);
-  color: var(--color-teal);
+.event-card-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
 }
 
-.event-icon-health::before {
-  content: "+";
-  width: auto;
-  height: auto;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-  font-weight: 820;
-  line-height: 1;
-}
-
-.event-icon-gift,
-.event-icon-magic {
+.event-icon-gift {
   background: rgba(138, 63, 252, 0.12);
   color: var(--color-accent);
-}
-
-.event-icon-note {
-  background: rgba(244, 119, 63, 0.12);
-  color: var(--color-orange);
 }
 
 .event-detail-view,
