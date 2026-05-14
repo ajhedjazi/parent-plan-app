@@ -52,7 +52,7 @@
   stroke-width: 2;
 }
 
-.hero-copy h1 span {
+.hero-title span {
   max-width: 100%;
   position: relative;
   background: var(--gradient-accent-text);
@@ -61,7 +61,7 @@
   color: transparent;
 }
 
-.hero-copy h1 span::after {
+.hero-title span::after {
   content: "";
   position: absolute;
   right: 0.04em;
