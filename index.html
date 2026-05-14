@@ -6,7 +6,7 @@
     <title>Shared Family Calendar Prototype</title>
     <meta
       name="description"
-      content="A calm shared calendar prototype for separated parents to coordinate child-related dates and simple requests."
+      content="A calm shared calendar prototype for separated parents to coordinate child-related dates."
     >
     <link rel="stylesheet" href="css/tokens.css">
     <link rel="stylesheet" href="css/base.css">
@@ -21,12 +21,11 @@
           <p class="eyebrow">Shared family calendar</p>
           <h1>Know what is coming up, without another long conversation.</h1>
           <p class="site-intro">
-            A simple place for dates, practical notes, and requests that need a clear yes or no.
+            A simple place for child-related dates and practical notes.
           </p>
         </div>
         <div class="header-actions" aria-label="Primary actions">
           <button class="button button-primary" type="button" data-open-panel="event-panel">Add Event</button>
-          <button class="button button-secondary" type="button" data-open-panel="request-panel">New Request</button>
         </div>
       </div>
     </header>
@@ -73,16 +72,6 @@
               </div>
             </div>
             <div class="stack" id="upcoming-list"></div>
-          </section>
-
-          <section class="panel" aria-labelledby="pending-title">
-            <div class="section-header compact">
-              <div>
-                <p class="section-kicker">Needs agreement</p>
-                <h2 id="pending-title">Pending requests</h2>
-              </div>
-            </div>
-            <div class="stack" id="pending-requests"></div>
           </section>
         </aside>
       </div>
@@ -133,45 +122,6 @@
         <div class="form-actions">
           <button class="button button-secondary" type="button" data-close-panel>Cancel</button>
           <button class="button button-primary" type="submit">Save event</button>
-        </div>
-      </form>
-    </dialog>
-
-    <dialog class="form-panel" id="request-panel" aria-labelledby="request-form-title">
-      <form method="dialog" class="panel-form" id="request-form">
-        <div class="form-header">
-          <div>
-            <p class="section-kicker">Needs agreement</p>
-            <h2 id="request-form-title">New request</h2>
-          </div>
-          <button class="icon-button" type="button" data-close-panel aria-label="Close new request form">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-
-        <label>
-          <span>Request title</span>
-          <input type="text" name="title" placeholder="Move dentist appointment" required>
-        </label>
-
-        <label>
-          <span>Request details</span>
-          <textarea
-            name="details"
-            rows="4"
-            placeholder="The clinic only has a later appointment available that week."
-            required
-          ></textarea>
-        </label>
-
-        <label>
-          <span>Related date <small>optional</small></span>
-          <input type="date" name="date">
-        </label>
-
-        <div class="form-actions">
-          <button class="button button-secondary" type="button" data-close-panel>Cancel</button>
-          <button class="button button-primary" type="submit">Create request</button>
         </div>
       </form>
     </dialog>

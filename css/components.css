@@ -48,17 +48,6 @@
   color: var(--color-accent-strong);
 }
 
-.button-accept {
-  background: var(--color-accepted);
-  color: #f8fff9;
-}
-
-.button-decline {
-  border-color: #cbb4b8;
-  background: var(--color-declined-soft);
-  color: #69484e;
-}
-
 .icon-button {
   width: 40px;
   height: 40px;
@@ -86,7 +75,6 @@
 }
 
 .event-card,
-.request-card,
 .empty-state {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
@@ -99,8 +87,7 @@
   gap: var(--space-3);
 }
 
-.event-meta,
-.request-meta {
+.event-meta {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
@@ -120,59 +107,7 @@
   gap: var(--space-2);
 }
 
-.status-badge {
-  width: fit-content;
-  display: inline-flex;
-  align-items: center;
-  border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 0.78rem;
-  font-weight: 760;
-}
-
-.status-pending {
-  background: var(--color-pending-soft);
-  color: var(--color-pending);
-}
-
-.status-accepted {
-  background: var(--color-accepted-soft);
-  color: var(--color-accepted);
-}
-
-.status-declined {
-  background: var(--color-declined-soft);
-  color: var(--color-declined);
-}
-
-.request-card {
-  display: grid;
-  gap: var(--space-3);
-}
-
-.request-actions {
-  display: grid;
-  gap: var(--space-2);
-}
-
-.response-note {
-  display: grid;
-  gap: var(--space-2);
-}
-
-.response-note label {
-  color: var(--color-muted);
-  font-size: 0.86rem;
-  font-weight: 700;
-}
-
 .empty-state {
   color: var(--color-muted);
   background: rgba(255, 255, 255, 0.6);
-}
-
-@media (min-width: 560px) {
-  .request-actions {
-    grid-template-columns: 1fr 1fr;
-  }
 }

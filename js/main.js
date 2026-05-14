@@ -44,35 +44,6 @@ const seedData = {
       createdBy: "Alex",
     },
   ],
-  requests: [
-    {
-      id: "request-1",
-      title: "Move dentist appointment",
-      details: "The clinic has offered a later slot on the same day. Can we move it to 4:30pm?",
-      date: getIsoDate(12),
-      status: "pending",
-      createdBy: "Sam",
-      responseNote: "",
-    },
-    {
-      id: "request-2",
-      title: "Add school fair date",
-      details: "School fair is listed for the last Friday of the month. Add it to the shared calendar?",
-      date: getIsoDate(26),
-      status: "accepted",
-      createdBy: "Alex",
-      responseNote: "Agreed. Added to the plan for that week.",
-    },
-    {
-      id: "request-3",
-      title: "Swap swimming pickup",
-      details: "Can you cover swimming pickup this week? I have a late meeting.",
-      date: getIsoDate(18),
-      status: "declined",
-      createdBy: "Sam",
-      responseNote: "I cannot cover that time this week.",
-    },
-  ],
 };
 
 let state = loadState();
@@ -80,9 +51,7 @@ let state = loadState();
 const calendarGrid = document.querySelector("#calendar-grid");
 const monthLabel = document.querySelector("#month-label");
 const upcomingList = document.querySelector("#upcoming-list");
-const pendingRequests = document.querySelector("#pending-requests");
 const eventForm = document.querySelector("#event-form");
-const requestForm = document.querySelector("#request-form");
 
 document.querySelector("#prev-month").addEventListener("click", () => {
   visibleMonth = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() - 1, 1);
@@ -125,24 +94,6 @@ eventForm.addEventListener("submit", (event) => {
   saveState();
   eventForm.reset();
   eventForm.closest("dialog").close();
-  render();
-});
-
-requestForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const data = new FormData(requestForm);
-  state.requests.unshift({
-    id: createId("request"),
-    title: data.get("title").trim(),
-    details: data.get("details").trim(),
-    date: data.get("date"),
-    status: "pending",
-    createdBy: "Alex",
-    responseNote: "",
-  });
-  saveState();
-  requestForm.reset();
-  requestForm.closest("dialog").close();
   render();
 });
 
@@ -200,7 +151,6 @@ function createId(prefix) {
 function render() {
   renderCalendar();
   renderUpcoming();
-  renderPendingRequests();
 }
 
 function renderCalendar() {
@@ -263,20 +213,6 @@ function renderUpcoming() {
   });
 }
 
-function renderPendingRequests() {
-  const pending = state.requests.filter((request) => request.status === "pending");
-  pendingRequests.innerHTML = "";
-
-  if (!pending.length) {
-    pendingRequests.append(createEmptyState("No requests need a response right now."));
-    return;
-  }
-
-  pending.slice(0, 2).forEach((request) => {
-    pendingRequests.append(createRequestCard(request, true));
-  });
-}
-
 function getEventsForVisibleMonth() {
   return state.events
     .filter((event) => {
@@ -330,82 +266,6 @@ function createEventCard(event) {
   return card;
 }
 
-function createRequestCard(request, compact = false) {
-  const card = document.createElement("article");
-  card.className = "request-card";
-
-  const status = document.createElement("span");
-  status.className = `status-badge status-${request.status}`;
-  status.textContent = getStatusLabel(request.status);
-
-  const title = document.createElement("h3");
-  title.textContent = request.title;
-
-  const details = document.createElement("p");
-  details.className = "request-details";
-  details.textContent = request.details;
-
-  const meta = document.createElement("div");
-  meta.className = "request-meta";
-  meta.append(createTextNode(`Requested by ${request.createdBy}`));
-  if (request.date) {
-    meta.append(createTextNode(formatDate.format(new Date(`${request.date}T00:00:00`))));
-  }
-
-  card.append(status, title, details, meta);
-
-  if (request.status === "pending") {
-    const response = document.createElement("div");
-    response.className = "response-note";
-
-    const responseId = `response-${request.id}`;
-    const label = document.createElement("label");
-    label.setAttribute("for", responseId);
-    label.textContent = "Response note";
-
-    const note = document.createElement("textarea");
-    note.id = responseId;
-    note.rows = compact ? 2 : 3;
-    note.placeholder = "Optional short note";
-
-    const actions = document.createElement("div");
-    actions.className = "request-actions";
-    actions.append(
-      createStatusButton(request.id, "accepted", note),
-      createStatusButton(request.id, "declined", note),
-    );
-
-    response.append(label, note, actions);
-    card.append(response);
-  } else if (request.responseNote) {
-    const response = document.createElement("p");
-    response.className = "request-details";
-    response.innerHTML = `<strong>Response note:</strong> ${escapeHtml(request.responseNote)}`;
-    card.append(response);
-  }
-
-  return card;
-}
-
-function createStatusButton(requestId, status, noteInput) {
-  const button = document.createElement("button");
-  button.type = "button";
-  button.className = status === "accepted" ? "button button-accept" : "button button-decline";
-  button.textContent = status === "accepted" ? "Accept" : "Decline";
-  button.addEventListener("click", () => {
-    const request = state.requests.find((item) => item.id === requestId);
-    if (!request) {
-      return;
-    }
-
-    request.status = status;
-    request.responseNote = noteInput.value.trim();
-    saveState();
-    render();
-  });
-  return button;
-}
-
 function openDayEvents(isoDate) {
   const event = state.events.find((item) => item.date === isoDate);
   if (!event) {
@@ -446,14 +306,6 @@ function createTextNode(text) {
 function formatEventDate(event) {
   const dateText = formatDate.format(new Date(`${event.date}T00:00:00`));
   return event.time ? `${dateText}, ${event.time}` : dateText;
-}
-
-function getStatusLabel(status) {
-  return {
-    pending: "Needs response",
-    accepted: "Agreed",
-    declined: "Not agreed",
-  }[status];
 }
 
 function getCalendarLabel(date, events) {

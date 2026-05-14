@@ -99,10 +99,6 @@
   font-size: 0.86rem;
 }
 
-.request-details {
-  color: var(--color-muted);
-}
-
 .form-panel {
   width: min(100% - 24px, 520px);
   border: 0;
