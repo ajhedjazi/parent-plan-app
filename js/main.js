@@ -1,4 +1,9 @@
 const storageKey = "coParentCalendarPrototype";
+const legacySeedEvents = new Map([
+  ["event-1", "School trip form due"],
+  ["event-2", "Dentist appointment"],
+  ["event-3", "Birthday party"],
+]);
 
 const formatDate = new Intl.DateTimeFormat("en-GB", {
   weekday: "short",
@@ -13,6 +18,7 @@ const formatMonth = new Intl.DateTimeFormat("en-GB", {
 
 const today = new Date();
 let visibleMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+const dadWeekendAnchorMs = Date.UTC(2026, 4, 15);
 
 const childOptions = ["Ted", "Gus", "Both"];
 const weekdayMap = {
@@ -52,38 +58,7 @@ const monthMap = {
 };
 
 const seedData = {
-  events: [
-    {
-      id: "event-1",
-      title: "School trip form due",
-      child: "Ted",
-      date: getIsoDate(4),
-      time: "09:00",
-      notes: "Return the signed form and payment slip.",
-      createdBy: "Alex",
-      status: "active",
-    },
-    {
-      id: "event-2",
-      title: "Dentist appointment",
-      child: "Gus",
-      date: getIsoDate(12),
-      time: "16:30",
-      notes: "Bring the blue folder from the kitchen drawer.",
-      createdBy: "Sam",
-      status: "active",
-    },
-    {
-      id: "event-3",
-      title: "Birthday party",
-      child: "Both",
-      date: getIsoDate(22),
-      time: "14:00",
-      notes: "Present already bought. Card still needed.",
-      createdBy: "Alex",
-      status: "active",
-    },
-  ],
+  events: [],
 };
 
 let state = loadState();
@@ -252,7 +227,7 @@ function saveState() {
 }
 
 function normalizeState(nextState) {
-  nextState.events = nextState.events.map((event) => {
+  nextState.events = nextState.events.filter(isUserEvent).map((event) => {
     const child = {
       Maya: "Ted",
       Leo: "Gus",
@@ -269,6 +244,10 @@ function normalizeState(nextState) {
   });
 
   return nextState;
+}
+
+function isUserEvent(event) {
+  return legacySeedEvents.get(event.id) !== event.title;
 }
 
 function getIsoDate(dayOffset) {
@@ -308,11 +287,16 @@ function renderCalendar() {
     cellDate.setDate(gridStart.getDate() + index);
     const isoDate = toIsoDate(cellDate);
     const dayEvents = state.events.filter((item) => item.date === isoDate);
+    const parentDay = getParentDay(cellDate);
 
     const button = document.createElement("button");
     button.type = "button";
     button.className = "calendar-day";
-    button.setAttribute("aria-label", getCalendarLabel(cellDate, dayEvents));
+    button.setAttribute("aria-label", getCalendarLabel(cellDate, dayEvents, parentDay));
+
+    if (parentDay) {
+      button.classList.add("is-parent-day", `parent-day-${parentDay.key}`);
+    }
 
     if (cellDate.getMonth() !== visibleMonth.getMonth()) {
       button.classList.add("is-muted");
@@ -325,6 +309,17 @@ function renderCalendar() {
     const number = document.createElement("span");
     number.className = "day-number";
     number.textContent = cellDate.getDate();
+
+    const header = document.createElement("span");
+    header.className = "day-header";
+    header.append(number);
+
+    if (parentDay) {
+      const parentLabel = document.createElement("span");
+      parentLabel.className = "parent-day-label";
+      parentLabel.textContent = parentDay.label;
+      header.append(parentLabel);
+    }
 
     const markers = document.createElement("span");
     markers.className = "day-markers";
@@ -340,7 +335,7 @@ function renderCalendar() {
       markers.append(dot);
     });
 
-    button.append(number, markers);
+    button.append(header, markers);
     button.addEventListener("click", () => openDayEvents(isoDate));
     calendarGrid.append(button);
   }
@@ -1284,13 +1279,36 @@ function getStatusLabel(status) {
   return status === "cancelled" ? "Cancelled" : "Active";
 }
 
-function getCalendarLabel(date, events) {
-  const label = formatDate.format(date);
-  if (!events.length) {
-    return `${label}, no events. Click to add an event.`;
+function getParentDay(date) {
+  const day = date.getDay();
+  if ([2, 4].includes(day)) {
+    return { key: "dad", label: "Dad", type: "weekday" };
   }
 
-  return `${label}, ${events.length} event${events.length === 1 ? "" : "s"}.`;
+  if (![0, 5, 6].includes(day)) {
+    return null;
+  }
+
+  const weekendStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const daysFromFriday = day === 0 ? 2 : day - 5;
+  weekendStart.setDate(weekendStart.getDate() - daysFromFriday);
+
+  const dayMs = 24 * 60 * 60 * 1000;
+  const weekendStartMs = Date.UTC(weekendStart.getFullYear(), weekendStart.getMonth(), weekendStart.getDate());
+  const weekOffset = Math.round((weekendStartMs - dadWeekendAnchorMs) / dayMs / 7);
+  return weekOffset % 2 === 0
+    ? { key: "dad", label: "Dad", type: "weekend" }
+    : { key: "mum", label: "Mum", type: "weekend" };
+}
+
+function getCalendarLabel(date, events, parentDay) {
+  const label = formatDate.format(date);
+  const parentText = parentDay ? ` ${parentDay.label} ${parentDay.type}.` : "";
+  if (!events.length) {
+    return `${label}, no events.${parentText} Click to add an event.`;
+  }
+
+  return `${label}, ${events.length} event${events.length === 1 ? "" : "s"}.${parentText}`;
 }
 
 function escapeHtml(value) {
