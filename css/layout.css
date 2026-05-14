@@ -39,10 +39,6 @@
   gap: var(--space-4);
 }
 
-.full-width-section {
-  margin-top: var(--space-5);
-}
-
 .section-header {
   display: flex;
   align-items: flex-start;
@@ -60,11 +56,6 @@
 }
 
 .stack {
-  display: grid;
-  gap: var(--space-3);
-}
-
-.request-list {
   display: grid;
   gap: var(--space-3);
 }
@@ -95,7 +86,4 @@
     grid-template-columns: minmax(0, 1fr) auto;
   }
 
-  .request-list {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
 }

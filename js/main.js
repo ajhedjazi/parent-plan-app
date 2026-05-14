@@ -84,7 +84,6 @@ const calendarGrid = document.querySelector("#calendar-grid");
 const monthLabel = document.querySelector("#month-label");
 const upcomingList = document.querySelector("#upcoming-list");
 const pendingRequests = document.querySelector("#pending-requests");
-const requestList = document.querySelector("#request-list");
 const eventForm = document.querySelector("#event-form");
 const requestForm = document.querySelector("#request-form");
 
@@ -188,7 +187,6 @@ function render() {
   renderCalendar();
   renderUpcoming();
   renderPendingRequests();
-  renderRequests();
 }
 
 function renderCalendar() {
@@ -262,13 +260,6 @@ function renderPendingRequests() {
 
   pending.slice(0, 2).forEach((request) => {
     pendingRequests.append(createRequestCard(request, true));
-  });
-}
-
-function renderRequests() {
-  requestList.innerHTML = "";
-  state.requests.forEach((request) => {
-    requestList.append(createRequestCard(request));
   });
 }
 
