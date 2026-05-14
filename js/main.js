@@ -91,6 +91,9 @@ let state = loadState();
 const calendarGrid = document.querySelector("#calendar-grid");
 const monthLabel = document.querySelector("#month-label");
 const upcomingList = document.querySelector("#upcoming-list");
+const eventsMonthCount = document.querySelector("#events-month-count");
+const childrenCount = document.querySelector("#children-count");
+const sharedWithCount = document.querySelector("#shared-with-count");
 const eventForm = document.querySelector("#event-form");
 const eventDetailPanel = document.querySelector("#event-detail-panel");
 const eventDetailTitle = document.querySelector("#event-detail-title");
@@ -285,8 +288,10 @@ function createId(prefix) {
 }
 
 function render() {
+  const monthEvents = getEventsForVisibleMonth();
   renderCalendar();
-  renderUpcoming();
+  renderUpcoming(monthEvents);
+  renderStats(monthEvents);
 }
 
 function renderCalendar() {
@@ -326,6 +331,7 @@ function renderCalendar() {
     dayEvents.slice(0, 3).forEach((dayEvent) => {
       const dot = document.createElement("span");
       dot.className = "day-dot";
+      dot.classList.add(`tone-${getEventTone(dayEvent)}`);
       if (dayEvent.status === "cancelled") {
         dot.classList.add("is-cancelled");
       }
@@ -338,8 +344,7 @@ function renderCalendar() {
   }
 }
 
-function renderUpcoming() {
-  const monthEvents = getEventsForVisibleMonth();
+function renderUpcoming(monthEvents = getEventsForVisibleMonth()) {
   upcomingList.innerHTML = "";
 
   if (!monthEvents.length) {
@@ -350,6 +355,16 @@ function renderUpcoming() {
   monthEvents.forEach((event) => {
     upcomingList.append(createEventCard(event));
   });
+}
+
+function renderStats(monthEvents = getEventsForVisibleMonth()) {
+  const activeMonthEvents = monthEvents.filter((event) => event.status !== "cancelled");
+  const children = childOptions.filter((child) => child !== "Both");
+  const sharedWith = new Set(state.events.map((event) => event.createdBy).filter(Boolean));
+
+  eventsMonthCount.textContent = String(activeMonthEvents.length);
+  childrenCount.textContent = String(children.length);
+  sharedWithCount.textContent = String(sharedWith.size);
 }
 
 function getEventsForVisibleMonth() {
@@ -366,46 +381,68 @@ function getEventsForVisibleMonth() {
 
 function createEventCard(event) {
   const card = document.createElement("article");
-  card.className = "event-card";
+  const tone = getEventTone(event);
+  card.className = `event-card tone-${tone}`;
   if (event.status === "cancelled") {
     card.classList.add("is-cancelled");
   }
 
-  const date = document.createElement("p");
-  date.className = "date-pill";
-  date.textContent = formatEventDate(event);
+  const date = document.createElement("div");
+  date.className = "event-date-badge";
   if (event.status === "cancelled") {
     date.classList.add("is-cancelled");
   }
 
+  const dateText = document.createElement("span");
+  dateText.textContent = formatDate.format(new Date(`${event.date}T00:00:00`));
+
+  const timeText = document.createElement("strong");
+  timeText.textContent = event.time;
+  date.append(dateText, timeText);
+
   const status = document.createElement("span");
   status.className = `status-badge status-${event.status}`;
   status.textContent = getStatusLabel(event.status);
+
+  const body = document.createElement("div");
+  body.className = "event-card-body";
 
   const title = document.createElement("h3");
   title.textContent = event.title;
 
   const meta = document.createElement("div");
   meta.className = "event-meta";
-  meta.append(createTextNode(event.child));
+  meta.append(createBadge(event.child, "child-badge"));
+  if (event.source === "ai_import") {
+    meta.append(createBadge("Magic Dates", "source-badge"));
+  }
 
   const createdBy = document.createElement("p");
   createdBy.className = "created-by";
   createdBy.textContent = `Created by ${event.createdBy}`;
 
+  body.append(title, meta, createdBy);
+  if (event.status === "cancelled") {
+    body.append(status);
+  }
+
+  const actionWrap = document.createElement("div");
+  actionWrap.className = "event-card-actions";
+
   const detailButton = document.createElement("button");
-  detailButton.className = "button button-secondary";
+  detailButton.className = "button button-secondary event-card-action";
   detailButton.type = "button";
   detailButton.textContent = "View / edit";
   detailButton.addEventListener("click", () => {
     openEventDetails(event.id);
   });
 
-  card.append(date);
-  if (event.status === "cancelled") {
-    card.append(status);
-  }
-  card.append(title, meta, createdBy, detailButton);
+  const icon = document.createElement("span");
+  icon.className = `event-card-icon event-icon-${getEventIcon(event)}`;
+  icon.setAttribute("aria-hidden", "true");
+
+  actionWrap.append(icon, detailButton);
+  card.append(date, body, actionWrap);
   return card;
 }
 
@@ -1192,6 +1229,65 @@ function createTextNode(text) {
   const span = document.createElement("span");
   span.textContent = text;
   return span;
+}
+
+function createBadge(text, className) {
+  const badge = document.createElement("span");
+  badge.className = className;
+  badge.textContent = text;
+  return badge;
+}
+
+function getEventTone(event) {
+  const title = event.title.toLowerCase();
+
+  if (event.source === "ai_import") {
+    return "magic";
+  }
+
+  if (/\b(dentist|doctor|appointment|health)\b/.test(title)) {
+    return "teal";
+  }
+
+  if (/\b(birthday|party|gift)\b/.test(title)) {
+    return "purple";
+  }
+
+  if (/\b(school|form|trip|club|lesson)\b/.test(title)) {
+    return "orange";
+  }
+
+  if (event.child === "Gus") {
+    return "teal";
+  }
+
+  if (event.child === "Both") {
+    return "purple";
+  }
+
+  return "orange";
+}
+
+function getEventIcon(event) {
+  const title = event.title.toLowerCase();
+
+  if (event.source === "ai_import") {
+    return "magic";
+  }
+
+  if (/\b(dentist|doctor|appointment|health)\b/.test(title)) {
+    return "health";
+  }
+
+  if (/\b(birthday|party|gift)\b/.test(title)) {
+    return "gift";
+  }
+
+  if (/\b(school|form|trip|club|lesson)\b/.test(title)) {
+    return "note";
+  }
+
+  return "calendar";
 }
 
 function formatEventDate(event) {

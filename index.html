@@ -16,20 +16,70 @@
   </head>
   <body>
     <header class="site-header">
-      <div class="container site-header-inner">
-        <div>
+      <div class="container top-bar">
+        <a class="brand-lockup" href="#calendar-title" aria-label="Shared Family Calendar home">
+          <span class="brand-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M5 19 19 5"></path>
+              <path d="M14 5h5v5"></path>
+              <path d="M5 7l2-2 2 2-2 2z"></path>
+              <path d="M16 17l1.5-1.5L19 17l-1.5 1.5z"></path>
+            </svg>
+          </span>
+          <span>Shared Family Calendar</span>
+        </a>
+        <div class="header-actions" aria-label="Primary actions">
+          <button class="button button-primary" type="button" data-open-panel="event-panel">
+            <svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <rect x="5" y="5" width="14" height="14" rx="2"></rect>
+              <path d="M8 3v4"></path>
+              <path d="M16 3v4"></path>
+              <path d="M5 10h14"></path>
+              <path d="M12 13v4"></path>
+              <path d="M10 15h4"></path>
+            </svg>
+            <span>Add Event</span>
+          </button>
+          <button class="button button-secondary magic-action" type="button" data-open-panel="magic-dates-panel">
+            <svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M5 19 19 5"></path>
+              <path d="M15 5h4v4"></path>
+              <path d="M6 5l1-2 1 2 2 1-2 1-1 2-1-2-2-1z"></path>
+              <path d="M17 16l.8-1.6.8 1.6 1.6.8-1.6.8-.8 1.6-.8-1.6-1.6-.8z"></path>
+            </svg>
+            <span>Magic Dates</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="container hero-shell">
+        <div class="hero-copy">
           <p class="eyebrow">Shared family calendar</p>
-          <h1>Know what is coming up, without another long conversation.</h1>
+          <h1>Know what is coming up, <span>without another long conversation.</span></h1>
           <p class="site-intro">
             A simple place for child-related dates and practical notes.
           </p>
         </div>
-        <div class="header-actions" aria-label="Primary actions">
-          <button class="button button-primary" type="button" data-open-panel="event-panel">Add Event</button>
-          <button class="button button-secondary" type="button" data-open-panel="magic-dates-panel">
-            <span aria-hidden="true">🪄</span>
-            <span>Magic Dates</span>
-          </button>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="hero-visual-glow"></div>
+          <div class="hero-calendar-illustration">
+            <div class="hero-calendar-top"></div>
+            <div class="hero-calendar-grid">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+          <div class="hero-family-illustration">
+            <span class="family-avatar avatar-one"></span>
+            <span class="family-avatar avatar-two"></span>
+          </div>
         </div>
       </div>
     </header>
@@ -65,6 +115,55 @@
             </div>
             <div class="calendar-grid" id="calendar-grid" aria-label="Monthly calendar"></div>
           </div>
+
+          <div class="stats-strip" aria-label="Calendar summary">
+            <div class="stat-item">
+              <span class="stat-icon stat-events" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <rect x="5" y="5" width="14" height="14" rx="2"></rect>
+                  <path d="M8 3v4"></path>
+                  <path d="M16 3v4"></path>
+                  <path d="M8 12h8"></path>
+                  <path d="M8 16h5"></path>
+                </svg>
+              </span>
+              <span>
+                <strong id="events-month-count">0</strong>
+                <span>Events this month</span>
+              </span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-icon stat-children" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <circle cx="9" cy="8" r="3"></circle>
+                  <circle cx="16" cy="9" r="2.5"></circle>
+                  <path d="M4 19c.8-3 2.5-4.5 5-4.5S13.2 16 14 19"></path>
+                  <path d="M13.5 18.5c.7-2.2 2-3.3 4-3.3 1.7 0 2.8.9 3.5 2.8"></path>
+                </svg>
+              </span>
+              <span>
+                <strong id="children-count">0</strong>
+                <span>Children</span>
+              </span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-icon stat-shared" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M12 3v3"></path>
+                  <path d="M12 18v3"></path>
+                  <path d="M3 12h3"></path>
+                  <path d="M18 12h3"></path>
+                  <path d="m5.6 5.6 2.1 2.1"></path>
+                  <path d="m16.3 16.3 2.1 2.1"></path>
+                </svg>
+              </span>
+              <span>
+                <strong id="shared-with-count">0</strong>
+                <span>Shared with</span>
+              </span>
+            </div>
+          </div>
         </section>
 
         <aside class="summary-column" aria-label="Calendar summary">
@@ -76,6 +175,21 @@
               </div>
             </div>
             <div class="stack" id="upcoming-list"></div>
+            <button class="magic-feature-card" type="button" data-open-panel="magic-dates-panel">
+              <span class="magic-feature-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M5 19 19 5"></path>
+                  <path d="M15 5h4v4"></path>
+                  <path d="M6 5l1-2 1 2 2 1-2 1-1 2-1-2-2-1z"></path>
+                  <path d="M17 16l.8-1.6.8 1.6 1.6.8-1.6.8-.8 1.6-.8-1.6-1.6-.8z"></path>
+                </svg>
+              </span>
+              <span class="magic-feature-copy">
+                <strong>Magic Dates</strong>
+                <span>Paste messy messages. We'll find the dates.</span>
+              </span>
+              <span class="magic-feature-arrow" aria-hidden="true">&rsaquo;</span>
+            </button>
           </section>
         </aside>
       </div>
@@ -187,7 +301,7 @@
         <div class="form-header">
           <div>
             <p class="section-kicker">Magic Dates</p>
-            <h2 id="magic-dates-title">🪄 Magic Dates</h2>
+            <h2 id="magic-dates-title">Magic Dates</h2>
           </div>
           <button class="icon-button" type="button" data-close-panel aria-label="Close Magic Dates">
             <span aria-hidden="true">&times;</span>
