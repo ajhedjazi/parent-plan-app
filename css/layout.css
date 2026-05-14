@@ -84,6 +84,8 @@
 
   .summary-column {
     min-height: 0;
+    /* Let the calendar column set the desktop row height; the sidebar scrolls inside its panel. */
+    contain: size;
   }
 
   .summary-column .panel {
