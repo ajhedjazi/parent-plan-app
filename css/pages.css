@@ -12,13 +12,17 @@
 }
 
 .calendar-card {
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
 
 .calendar-weekdays,
 .calendar-grid {
+  flex: 1;
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-rows: repeat(6, minmax(0, 1fr));
 }
 
 .calendar-weekdays {

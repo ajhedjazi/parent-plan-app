@@ -82,6 +82,16 @@
     align-items: stretch;
   }
 
+  .calendar-section {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .calendar-card {
+    flex: 1;
+  }
+
   .summary-column {
     min-height: 0;
   }
