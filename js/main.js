@@ -19,30 +19,27 @@ const seedData = {
     {
       id: "event-1",
       title: "School trip form due",
-      child: "Maya",
+      child: "Ted",
       date: getIsoDate(4),
-      time: "",
-      location: "School office",
+      time: "09:00",
       notes: "Return the signed form and payment slip.",
       createdBy: "Alex",
     },
     {
       id: "event-2",
       title: "Dentist appointment",
-      child: "Leo",
+      child: "Gus",
       date: getIsoDate(12),
       time: "16:30",
-      location: "North Road Dental",
       notes: "Bring the blue folder from the kitchen drawer.",
       createdBy: "Sam",
     },
     {
       id: "event-3",
       title: "Birthday party",
-      child: "Maya",
+      child: "Both",
       date: getIsoDate(22),
       time: "14:00",
-      location: "The Green",
       notes: "Present already bought. Card still needed.",
       createdBy: "Alex",
     },
@@ -122,7 +119,6 @@ eventForm.addEventListener("submit", (event) => {
     child: data.get("child"),
     date: data.get("date"),
     time: data.get("time"),
-    location: data.get("location").trim(),
     notes: data.get("notes").trim(),
     createdBy: "Alex",
   });
@@ -153,18 +149,36 @@ requestForm.addEventListener("submit", (event) => {
 function loadState() {
   const saved = localStorage.getItem(storageKey);
   if (!saved) {
-    return structuredClone(seedData);
+    return normalizeState(structuredClone(seedData));
   }
 
   try {
-    return JSON.parse(saved);
+    return normalizeState(JSON.parse(saved));
   } catch {
-    return structuredClone(seedData);
+    return normalizeState(structuredClone(seedData));
   }
 }
 
 function saveState() {
   localStorage.setItem(storageKey, JSON.stringify(state));
+}
+
+function normalizeState(nextState) {
+  nextState.events = nextState.events.map((event) => {
+    const child = {
+      Maya: "Ted",
+      Leo: "Gus",
+    }[event.child] || event.child;
+
+    const { location, ...eventWithoutLocation } = event;
+    return {
+      ...eventWithoutLocation,
+      child,
+      time: event.time || "09:00",
+    };
+  });
+
+  return nextState;
 }
 
 function getIsoDate(dayOffset) {
@@ -289,9 +303,6 @@ function createEventCard(event) {
   const meta = document.createElement("div");
   meta.className = "event-meta";
   meta.append(createTextNode(event.child));
-  if (event.location) {
-    meta.append(createTextNode(event.location));
-  }
 
   const createdBy = document.createElement("p");
   createdBy.className = "created-by";
