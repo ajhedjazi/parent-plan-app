@@ -26,6 +26,10 @@
         </div>
         <div class="header-actions" aria-label="Primary actions">
           <button class="button button-primary" type="button" data-open-panel="event-panel">Add Event</button>
+          <button class="button button-secondary" type="button" data-open-panel="magic-dates-panel">
+            <span aria-hidden="true">🪄</span>
+            <span>Magic Dates</span>
+          </button>
         </div>
       </div>
     </header>
@@ -176,6 +180,85 @@
           </div>
         </form>
       </div>
+    </dialog>
+
+    <dialog class="form-panel magic-panel" id="magic-dates-panel" aria-labelledby="magic-dates-title">
+      <form method="dialog" class="panel-form" id="magic-dates-form">
+        <div class="form-header">
+          <div>
+            <p class="section-kicker">Magic Dates</p>
+            <h2 id="magic-dates-title">🪄 Magic Dates</h2>
+          </div>
+          <button class="icon-button" type="button" data-close-panel aria-label="Close Magic Dates">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <p class="helper-text">
+          Paste a message, routine, or school note and turn it into calendar dates.
+        </p>
+
+        <label>
+          <span>Message or routine</span>
+          <textarea
+            name="magicText"
+            rows="6"
+            placeholder="Ted has football every Tuesday at 5pm until July"
+            required
+          ></textarea>
+        </label>
+
+        <div class="clarification-box is-hidden" id="magic-clarification" aria-live="polite">
+          <p id="magic-clarification-copy"></p>
+
+          <label data-clarification-field="child">
+            <span>Child/person</span>
+            <select name="clarificationChild">
+              <option value="">Select child/person</option>
+              <option value="Ted">Ted</option>
+              <option value="Gus">Gus</option>
+              <option value="Both">Both</option>
+            </select>
+          </label>
+
+          <label data-clarification-field="exactDate">
+            <span>Exact date</span>
+            <input type="date" name="clarificationDate">
+          </label>
+
+          <label data-clarification-field="recurringEndDate">
+            <span>Repeat until</span>
+            <input type="date" name="clarificationEndDate">
+          </label>
+
+          <label data-clarification-field="time">
+            <span>Time</span>
+            <input type="time" name="clarificationTime">
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button class="button button-secondary" type="button" id="magic-cancel">Cancel</button>
+          <button class="button button-primary" type="submit">Generate dates</button>
+        </div>
+
+        <section class="magic-preview is-hidden" id="magic-preview" aria-labelledby="magic-preview-title">
+          <div class="section-header compact">
+            <div>
+              <p class="section-kicker">Preview</p>
+              <h3 id="magic-preview-title">Review before adding</h3>
+            </div>
+          </div>
+
+          <div class="stack" id="magic-preview-list"></div>
+
+          <div class="form-actions">
+            <button class="button button-primary" type="button" id="magic-add-all">Add all to calendar</button>
+            <button class="button button-secondary" type="button" id="magic-edit-preview">Edit before adding</button>
+            <button class="button button-secondary" type="button" id="magic-cancel-preview">Cancel</button>
+          </div>
+        </section>
+      </form>
     </dialog>
 
     <template id="empty-state-template">

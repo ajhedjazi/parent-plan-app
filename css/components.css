@@ -12,6 +12,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: var(--space-2);
   border: 1px solid transparent;
   border-radius: var(--radius-button);
   padding: 0 var(--space-4);
@@ -85,6 +86,7 @@
 }
 
 .event-card,
+.preview-card,
 .empty-state {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
@@ -93,6 +95,11 @@
 }
 
 .event-card {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.preview-card {
   display: grid;
   gap: var(--space-3);
 }
@@ -140,6 +147,55 @@
 
 .detail-row dd {
   margin: 0;
+}
+
+.helper-text,
+.preview-notes {
+  color: var(--color-muted);
+}
+
+.clarification-box {
+  display: grid;
+  gap: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface-soft);
+  padding: var(--space-4);
+}
+
+.clarification-box p {
+  color: var(--color-muted);
+}
+
+.magic-preview {
+  display: grid;
+  gap: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-4);
+}
+
+.preview-fields {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.preview-flags {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.preview-flags:empty {
+  display: none;
+}
+
+.preview-flags p {
+  width: fit-content;
+  border-radius: 999px;
+  background: var(--color-surface-soft);
+  color: var(--color-muted);
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
 .event-detail-actions {

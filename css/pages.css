@@ -115,6 +115,10 @@
   padding: 0;
 }
 
+.magic-panel {
+  width: min(100% - 24px, 720px);
+}
+
 .form-panel::backdrop {
   background: rgba(44, 40, 36, 0.28);
 }
